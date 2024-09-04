@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -9,11 +11,24 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float jumpSpeed;
 
+    public bool facingRight = true;
     private bool isGrounded = false;
+    [SerializeField] private LayerMask isGround;
 
     
     private Rigidbody2D rigidbodyPlayer;
     private Animator animator;
+
+    [SerializeField] private Transform wallCheck;
+    [SerializeField] private float wallCheckDistance;
+    private bool isWallDetected;
+    private bool canWallSlide;
+    private bool isWallSliding;
+
+    private CameraFollowObject _cameraFollowObject;
+    [SerializeField] private GameObject _cameraFollowGO;
+
+
 
 
 
@@ -22,6 +37,7 @@ public class PlayerController : MonoBehaviour
     {
         rigidbodyPlayer = GetComponent<Rigidbody2D>();
         animator = GetComponent<Animator>();
+        _cameraFollowObject = _cameraFollowGO.GetComponent<CameraFollowObject>();
     }
 
     // Update is called once per frame
@@ -30,6 +46,34 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         //HandleInteraction()
         HandleGravity();
+        HandleAnimator();
+        CollisionCheck();
+    }
+
+    private void HandleAnimator()
+    {
+        animator.SetFloat("xVelocity", Mathf.Abs(rigidbodyPlayer.velocity.x));
+        animator.SetFloat("yVelocity", rigidbodyPlayer.velocity.y);
+        animator.SetBool("isJumping", !isGrounded);
+
+        animator.SetBool("isWallSliding", isWallSliding);
+    }
+
+    private void FixedUpdate()
+    {
+
+        if(isWallDetected && canWallSlide)
+        {
+            isWallSliding = true;
+            rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, rigidbodyPlayer.velocity.y * 0.75f);
+        }
+        else
+        {
+            isWallSliding = false;
+            rigidbodyPlayer.velocity = new Vector2(movement * speed, rigidbodyPlayer.velocity.y);
+        }
+
+
     }
 
     public void HandleGravity()
@@ -41,6 +85,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (rigidbodyPlayer.velocity.y > 0)
         {
+            
             rigidbodyPlayer.velocity += Vector2.up * Physics.gravity.y * Time.deltaTime;
 
         }
@@ -48,23 +93,21 @@ public class PlayerController : MonoBehaviour
 
     public void HandleMovement()
     {
-        movement = Input.GetAxis("Horizontal");
-        rigidbodyPlayer.velocity = new Vector2(movement * speed, rigidbodyPlayer.velocity.y);
-        animator.SetFloat("xVelocity", Mathf.Abs(rigidbodyPlayer.velocity.x));
-        animator.SetFloat("yVelocity", rigidbodyPlayer.velocity.y);
+        movement = Input.GetAxisRaw("Horizontal");
+        
 
 
         if (movement != 0)
         {
             //change
 
-            if (movement > 0)
+            if (movement > 0 && !facingRight)
             {
-                transform.localScale = new Vector2(1f, 1f);
+                Flip();
             }
-            else
+            else if(movement < 0 && facingRight)
             {
-                transform.localScale = new Vector2(-1f, 1f);
+                Flip();
 
             }
         }
@@ -77,18 +120,62 @@ public class PlayerController : MonoBehaviour
     {
         rigidbodyPlayer.velocity = new Vector2(rigidbodyPlayer.velocity.x, jumpSpeed);
         isGrounded = false;
-        animator.SetBool("isJumping", !isGrounded);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Ground"))
+        if (collision.CompareTag("Ground") && rigidbodyPlayer.velocity.y <= 0)
         {
             isGrounded = true;  
-            animator.SetBool("isJumping", !isGrounded);
+            isWallSliding = false;
+            //animator.SetBool("isJumping", !isGrounded);
         }
         
 
     }
+    private void OnTriggerStay2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ground") && rigidbodyPlayer.velocity.y <= 0)
 
+        {
+            isGrounded = true;
+            isWallSliding = false;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ground"))
+        {
+            isGrounded = false;
+            isWallSliding = false;
+        }
+    }
+
+    private void Flip()
+    {
+        facingRight = !facingRight;
+        wallCheckDistance *= -1;
+        transform.Rotate(0, 180, 0);
+
+        _cameraFollowObject.CallTurn();
+    }
+
+    private void CollisionCheck()
+    {
+        isWallDetected = Physics2D.Raycast(wallCheck.position, Vector2.right, wallCheckDistance, isGround);
+        if (!isGrounded && rigidbodyPlayer.velocity.y < 0)
+        {
+            canWallSlide = true;
+        }
+        else
+        {
+            canWallSlide = false;
+        }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawLine(wallCheck.position, new Vector3(wallCheck.position.x + wallCheckDistance, wallCheck.position.y, wallCheck.position.z));
+    }
 }
