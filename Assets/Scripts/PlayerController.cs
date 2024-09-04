@@ -28,10 +28,7 @@ public class PlayerController : MonoBehaviour
     private CameraFollowObject _cameraFollowObject;
     [SerializeField] private GameObject _cameraFollowGO;
 
-
-
-
-
+    public bool isInteracting;
 
     void Start()
     {
@@ -44,10 +41,23 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         HandleMovement();
-        //HandleInteraction()
+        HandleInteraction();
         HandleGravity();
         HandleAnimator();
         CollisionCheck();
+    }
+
+    private void HandleInteraction()
+    {
+        
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            isInteracting = true;
+        }
+        if(Input.GetKeyUp(KeyCode.E))
+        {
+            isInteracting = false;
+        }
     }
 
     private void HandleAnimator()
