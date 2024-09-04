@@ -7,11 +7,13 @@ public class CheckpointController : MonoBehaviour
     GameController gameController;
     [SerializeField] private Transform respawnPoint;
     [SerializeField] private SpriteRenderer checkNoFlag, checkFlag;
+    private Collider2D collider;
 
     private void Awake()
     {
         gameController = GameObject.Find("Player").GetComponent<GameController>();
         checkFlag.enabled = false;
+        collider = GetComponent<Collider2D>();
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -20,6 +22,7 @@ public class CheckpointController : MonoBehaviour
         {
             checkFlag.enabled = true;
             checkNoFlag.enabled = false;
+            collider.enabled = false;
             gameController.UpdateCheckpoint(respawnPoint.position);
         }
     }
