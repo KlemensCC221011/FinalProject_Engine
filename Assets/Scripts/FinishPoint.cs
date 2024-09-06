@@ -1,26 +1,36 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class FinishPoint : MonoBehaviour
 {
-    [SerializeField] private bool goNextLevel;
-    [SerializeField] private string levelName;
+    private Collider2D coll;
+
+    private void Start()
+    {
+        coll = GetComponent<Collider2D>();
+    }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player"))
         {
-            if (goNextLevel)
-            {
-                SceneController.instance.NextLevel();
+            coll.enabled = false;
+            UnlockNewLevel();
+            SceneController.instance.NextLevel();
 
-            }
-            else
-            {
-                SceneController.instance.LoadScene(levelName);
 
-            }
+        }
+    }
+
+    private void UnlockNewLevel()
+    {
+        if (SceneManager.GetActiveScene().buildIndex >= PlayerPrefs.GetInt("ReachedIndex"))
+        {
+            PlayerPrefs.SetInt("ReachedIndex", SceneManager.GetActiveScene().buildIndex + 1);
+            PlayerPrefs.SetInt("UnlockedLevel", PlayerPrefs.GetInt("UnlockedLevel", 1) + 1);
+            PlayerPrefs.Save();
         }
     }
 }

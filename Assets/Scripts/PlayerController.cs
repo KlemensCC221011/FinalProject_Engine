@@ -58,6 +58,18 @@ public class PlayerController : MonoBehaviour
         {
             isInteracting = false;
         }
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (!SceneController.instance.pauseMenu.isPaused)
+            {
+                SceneController.instance.pauseMenu.PauseGame();
+            }
+            else
+            {
+                SceneController.instance.pauseMenu.ResumeGame();
+
+            }
+        }
     }
 
     private void HandleAnimator()

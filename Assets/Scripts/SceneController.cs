@@ -7,6 +7,7 @@ public class SceneController : MonoBehaviour
 {
     public static SceneController instance;
     [SerializeField] Animator transitionAnim;
+    [SerializeField] public PauseMenu pauseMenu;
 
     private void Awake()
     {
@@ -36,7 +37,7 @@ public class SceneController : MonoBehaviour
         transitionAnim.SetTrigger("End");
         yield return new WaitForSeconds(1);
 
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
         transitionAnim.SetTrigger("Start");
 
 
