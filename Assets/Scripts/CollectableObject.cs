@@ -7,12 +7,15 @@ public class CollectableObject : MonoBehaviour
     public float amplitude = 0.5f;
     public float frequency = 1f;
     private float randomOffset;
+    private Collider2D coll;
 
     private Vector3 startPosition;
 
 
     void Start()
     {
+        coll = GetComponent<Collider2D>();
+
         startPosition = transform.position;
         randomOffset = Random.Range(0f, 2f * Mathf.PI);
     }
@@ -30,6 +33,9 @@ public class CollectableObject : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
+            gameObject.SetActive(false);
+            coll.enabled = false;
+
             //set collected ++
             Collect();
         }
@@ -38,7 +44,9 @@ public class CollectableObject : MonoBehaviour
 
     public void Collect()
     {
+        SceneController.instance.CollectItem();
 
-            Destroy(gameObject);
+        Destroy(gameObject);
+
     }
 }

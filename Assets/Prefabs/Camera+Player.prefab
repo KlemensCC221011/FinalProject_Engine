@@ -196,6 +196,10 @@ PrefabInstance:
       propertyPath: _cameraFollowGO
       value: 
       objectReference: {fileID: 2108415155755030028}
+    - target: {fileID: 8301084230142620541, guid: a7db8bd1c536ee141b4237b4f1375e7f, type: 3}
+      propertyPath: m_ExcludeLayers.m_Bits
+      value: 384
+      objectReference: {fileID: 0}
     - target: {fileID: 8580810942183768604, guid: a7db8bd1c536ee141b4237b4f1375e7f, type: 3}
       propertyPath: m_LocalPosition.x
       value: -9

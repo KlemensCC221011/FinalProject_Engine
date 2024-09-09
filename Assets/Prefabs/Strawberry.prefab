@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 8381961881334682950}
   - component: {fileID: 1791567563847550957}
   - component: {fileID: 7719968747875472683}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Strawberry
-  m_TagString: Untagged
+  m_TagString: Collectable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

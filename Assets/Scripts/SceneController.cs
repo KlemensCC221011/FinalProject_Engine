@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.IO;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -8,6 +9,10 @@ public class SceneController : MonoBehaviour
     public static SceneController instance;
     [SerializeField] Animator transitionAnim;
     [SerializeField] public PauseMenu pauseMenu;
+    [SerializeField] public CollectionBar collectionBar;
+    public int currentLevel;
+    private string saveJson;
+
 
     private void Awake()
     {
@@ -20,7 +25,10 @@ public class SceneController : MonoBehaviour
         {
             Destroy(gameObject);
         }
+
+        saveJson = Path.Combine(Application.persistentDataPath, "Save.json");
     }
+
 
     public void NextLevel()
     {
@@ -34,6 +42,7 @@ public class SceneController : MonoBehaviour
 
     IEnumerator LoadLevel()
     {
+
         transitionAnim.SetTrigger("End");
         yield return new WaitForSeconds(1);
 
@@ -42,5 +51,38 @@ public class SceneController : MonoBehaviour
 
 
 
+    }
+
+    public void SaveToJson(int reached)
+    {
+        currentLevel = reached;
+        SavingData data = new SavingData();
+        data.LevelReached = reached;
+
+        string json = JsonUtility.ToJson(data, true);
+        File.WriteAllText(saveJson, json);
+    }
+    public int LoadFromJson()
+    {
+        if (File.Exists(saveJson))
+        {
+            Debug.Log(saveJson);
+            string json = File.ReadAllText(saveJson);
+            SavingData data = JsonUtility.FromJson<SavingData>(json);
+            currentLevel = data.LevelReached;
+            return data.LevelReached;
+        }
+        else
+        {
+            return 0;
+        }
+
+        
+    }
+
+
+    public void CollectItem()
+    {
+        collectionBar.CollectItem();
     }
 }

@@ -44,7 +44,7 @@ GameObject:
   - component: {fileID: 5039988719198130903}
   - component: {fileID: 1579075992344523583}
   - component: {fileID: 7290171643664257892}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Saw
   m_TagString: Obstacle
   m_Icon: {fileID: 0}

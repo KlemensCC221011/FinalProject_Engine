@@ -11,14 +11,20 @@ public class LevelMenu : MonoBehaviour
 
     private void Awake()
     {
-        int unlockedLevel = PlayerPrefs.GetInt("UnlockedLevel", 1);
+        
+        int unlockedLevel = SceneController.instance.LoadFromJson() + 1;
         for (int i = 0; i < buttons.Length; i++)
         {
             buttons[i].interactable = false;
         }
+
         for (int i = 0;i < unlockedLevel; i++)
         {
-            buttons[i].interactable = true;
+            if(i < buttons.Length)
+            {
+                buttons[i].interactable = true;
+
+            }
         }
     }
     public void OpenLevel(int levelId)

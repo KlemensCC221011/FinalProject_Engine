@@ -43,8 +43,9 @@ public class PlayerController : MonoBehaviour
         HandleMovement();
         HandleInteraction();
         HandleGravity();
-        HandleAnimator();
         CollisionCheck();
+        HandleAnimator();
+
     }
 
     private void HandleInteraction()
@@ -146,7 +147,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.CompareTag("Ground") && rigidbodyPlayer.velocity.y <= 0)
+        if (collision.CompareTag("Ground") && rigidbodyPlayer.velocity.y <= 0.1f)
         {
             isGrounded = true;  
             isWallSliding = false;
@@ -157,7 +158,7 @@ public class PlayerController : MonoBehaviour
     }
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Ground") && rigidbodyPlayer.velocity.y <= 0)
+        if (collision.CompareTag("Ground") && rigidbodyPlayer.velocity.y <= 0.1f)
 
         {
             isGrounded = true;
